@@ -42,7 +42,6 @@ pandas==2.2.2
 pathlib2==2.3.7.post1
 pillow==10.3.0
 plyer==2.1.0
-podaacpy @ file:///C:/Users/shiel/OneDrive/Desktop/podaacpy
 psutil==5.9.8
 py-cpuinfo==9.0.0
 pycparser==2.22
