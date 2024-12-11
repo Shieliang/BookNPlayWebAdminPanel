@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Facilities</title>
+</head>
+<body>
+    <h1>Facilities</h1>
+    <ul>
+        {% for facility in facilities %}
+            <li>
+                <h2>{{ facility.name }}</h2>
+                <p>{{ facility.type }}</p>
+                <p>{{ facility.description }}</p>
+                <form method="POST" action="/book">
+                    <input type="hidden" name="facility_id" value="{{ facility._id }}">
+                    <button type="submit">Book</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
