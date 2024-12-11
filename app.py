@@ -4,7 +4,7 @@ from pymongo import MongoClient
 app = Flask(__name__)
 
 # MongoDB connection
-client = MongoClient("your_mongo_connection_string")
+client = MongoClient("mongodb+srv://shieliang22:shieliang2002@booknplay.vtags.mongodb.net/")
 db = client["FacilityDB"]
 facility_collection = db["Facility"]
 
@@ -20,4 +20,4 @@ def book():
     return f"Facility with ID {facility_id} booked!"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host = '0.0.0.0', port = 80, debug = False)
