@@ -16,6 +16,12 @@ body {
     background: white;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.sidebar.open {
+    transform: translateX(0);
 }
 
 .sidebar-header {
@@ -52,6 +58,7 @@ body {
     flex: 1;
     padding: 30px;
     background: #f5f5f5;
+    transition: margin-left 0.3s ease;
 }
 
 .header {
@@ -102,12 +109,18 @@ td {
 }
 
 .btn {
-    padding: 8px 16px;
+    padding: 8px 20px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 500;
     transition: all 0.3s ease;
+    width: auto; 
+    min-width: 120px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);  
 }
 
 .btn-primary {
@@ -137,6 +150,7 @@ td {
 .btn-delete {
     background: #e74c3c;
     color: white;
+    margin-top: 10px;
 }
 
 .modal {
@@ -148,6 +162,13 @@ td {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: block;
+    opacity: 1;
 }
 
 .modal-content {
@@ -157,6 +178,12 @@ td {
     margin: 50px auto;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
 }
 
 .modal-header {
@@ -207,6 +234,7 @@ td {
 .form-group select:focus {
     outline: none;
     border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); 
 }
 
 .modal-footer {
@@ -223,4 +251,47 @@ td {
 
 .section.active {
     display: block;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+        position: absolute;
+        left: -200px;
+        transition: left 0.3s ease;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 200px;
+    }
+
+    .nav-link {
+        padding: 10px 12px;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    th, td {
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 150px;
+    }
+
+    .main-content {
+        margin-left: 150px;
+    }
+
+    .nav-link {
+        padding: 8px 10px;
+    }
 }
