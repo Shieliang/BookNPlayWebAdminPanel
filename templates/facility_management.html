@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Management System</title>
+    <title>Facility Management</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
             padding: 20px;
         }
         a {
@@ -26,10 +25,8 @@
     </style>
 </head>
 <body>
-    <h1>Welcome to the Management System</h1>
-    <p>Select a management area:</p>
-    <a href="{{ url_for('user_management') }}">User Management</a>
-    <a href="{{ url_for('facility_management') }}">Facility Management</a>
-    <a href="{{ url_for('booking_management') }}">Booking Management</a>
+    <h1>Facility Management</h1>
+    <p>Welcome to the Facility Management page!</p>
+    <a href="{{ url_for('index') }}">Back to Home</a>
 </body>
 </html>
