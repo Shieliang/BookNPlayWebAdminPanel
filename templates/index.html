@@ -23,7 +23,7 @@
     <div id="users" class="section active">
       <div class="header">
         <h1>Manage Users</h1>
-        <button class="btn btn-primary" onclick="openModal('userModal')">Add User</button>
+        <button class="btn btn-primary" onclick="openModal('AddUserModal')">Add User</button>
       </div>
       <input type="text" class="search-bar" placeholder="Search users...">
       <table>
@@ -44,7 +44,7 @@
     <div id="facilities" class="section">
       <div class="header">
         <h1>Manage Facilities</h1>
-        <button class="btn btn-primary" onclick="openModal('facilityModal')">Add Facility</button>
+        <button class="btn btn-primary" onclick="openModal('AddFacilityModal')">Add Facility</button>
       </div>
       <input type="text" class="search-bar" placeholder="Search facilities...">
       <table>
@@ -67,7 +67,7 @@
     <div id="bookings" class="section">
       <div class="header">
         <h1>Manage Bookings</h1>
-        <button class="btn btn-primary" onclick="openModal('bookingModal')">Add Booking</button>
+        <button class="btn btn-primary" onclick="openModal('AddBookingModal')">Add Booking</button>
       </div>
       <input type="text" class="search-bar" placeholder="Search bookings...">
       <table>
@@ -89,12 +89,12 @@
     </div>
   </div>
 
-<!-- User Modal -->
-<div id="userModal" class="modal">
+<!-- User Edit Modal -->
+<div id="EditUserModal" class="modal" style="display: none;">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Add New User</h2>
-      <span class="close" onclick="closeModal('userModal')">&times;</span>
+      <h2>Edit User</h2>
+      <span class="close" onclick="closeModal('EditUserModal')">&times;</span>
     </div>
     <form id="userForm" onsubmit="handleUserSubmit(event)">
       <div class="form-group">
@@ -110,80 +110,236 @@
         <input type="email" id="userEmail" required>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('userModal')">Cancel</button>
-        <button type="submit" class="btn btn-primary">Add User</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('EditUserModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
       </div>
     </form>
   </div>
 </div>
 
-  <!-- Facility Modal -->
-  <div id="facilityModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Add New Facility</h2>
-        <span class="close" onclick="closeModal('facilityModal')">&times;</span>
-      </div>
-      <form id="facilityForm" onsubmit="handleFacilitySubmit(event)">
-        <div class="form-group">
-          <label for="facilityName">Facility Name</label>
-          <input type="text" id="facilityName" required>
-        </div>
-        <div class="form-group">
-          <label for="facilityLocation">Location</label>
-          <input type="text" id="facilityLocation" required>
-        </div>
-        <div class="form-group">
-          <label for="facilityStatus">Status</label>
-          <select id="facilityStatus" required>
-            <option value="available">Available</option>
-            <option value="occupied">Occupied</option>
-            <option value="maintenance">Maintenance</option>
-          </select>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('facilityModal')">Cancel</button>
-          <button type="submit" class="btn btn-primary">Add Facility</button>
-        </div>
-      </form>
+<!-- User Add Modal -->
+<div id="AddUserModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add New User</h2>
+      <span class="close" onclick="closeModal('AddUserModal')">&times;</span>
     </div>
+    <form id="userForm" onsubmit="handleUserSubmit(event)">
+      <div class="form-group">
+        <label for="userId">User ID</label>
+        <input type="text" id="userId" required>
+      </div>
+      <div class="form-group">
+        <label for="userName">Name</label>
+        <input type="text" id="userName" required>
+      </div>
+      <div class="form-group">
+        <label for="userEmail">Email</label>
+        <input type="email" id="userEmail" required>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('AddUserModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <!-- Booking Modal -->
-  <div id="bookingModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Add New Booking</h2>
-        <span class="close" onclick="closeModal('bookingModal')">&times;</span>
-      </div>
-      <form id="bookingForm" onsubmit="handleBookingSubmit(event)">
-        <div class="form-group">
-          <label for="bookingUser">User</label>
-          <select id="bookingUser" required></select>
-        </div>
-        <div class="form-group">
-          <label for="bookingFacility">Facility</label>
-          <select id="bookingFacility" required></select>
-        </div>
-        <div class="form-group">
-          <label for="bookingDate">Date</label>
-          <input type="datetime-local" id="bookingDate" required>
-        </div>
-        <div class="form-group">
-          <label for="bookingStatus">Status</label>
-          <select id="bookingStatus" required>
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('bookingModal')">Cancel</button>
-          <button type="submit" class="btn btn-primary">Add Booking</button>
-        </div>
-      </form>
+<!-- User Delete Modal -->
+<div id="DeleteUserModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Are you sure you want to delete this user?</h2>
+      <span class="close" onclick="closeModal('DeleteUserModal')">&times;</span>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('DeleteUserModal')">No</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">Yes</button>
     </div>
   </div>
+</div>
+
+<!-- Add Facility Modal -->
+<div id="AddFacilityModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add New Facility</h2>
+      <span class="close" onclick="closeModal('AddFacilityModal')">&times;</span>
+    </div>
+    <form id="addFacilityForm" onsubmit="handleFacilitySubmit(event, 'add')">
+      <div class="form-group">
+        <label for="addFacilityId">Facility ID</label>
+        <input type="text" id="addFacilityId" required>
+      </div>
+      <div class="form-group">
+        <label for="addFacilityName">Facility Name</label>
+        <input type="text" id="addFacilityName" required>
+      </div>
+      <div class="form-group">
+        <label for="addFacilityLocation">Location</label>
+        <input type="text" id="addFacilityLocation" required>
+      </div>
+      <div class="form-group">
+        <label for="addFacilityStatus">Status</label>
+        <select id="addFacilityStatus" required>
+          <option value="active">Active</option>
+          <option value="occupied">Occupied</option>
+          <option value="maintenance">Maintenance</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('AddFacilityModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Facility</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Facility Modal -->
+<div id="EditFacilityModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Edit Facility</h2>
+      <span class="close" onclick="closeModal('EditFacilityModal')">&times;</span>
+    </div>
+    <form id="editFacilityForm" onsubmit="handleFacilitySubmit(event, 'edit')">
+      <div class="form-group">
+        <label for="editFacilityId">Facility ID</label>
+        <input type="text" id="editFacilityId" required disabled>
+      </div>
+      <div class="form-group">
+        <label for="editFacilityName">Facility Name</label>
+        <input type="text" id="editFacilityName" required>
+      </div>
+      <div class="form-group">
+        <label for="editFacilityLocation">Location</label>
+        <input type="text" id="editFacilityLocation" required>
+      </div>
+      <div class="form-group">
+        <label for="editFacilityStatus">Status</label>
+        <select id="editFacilityStatus" required>
+          <option value="active">Active</option>
+          <option value="occupied">Occupied</option>
+          <option value="maintenance">Maintenance</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('EditFacilityModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Facility Delete Confirmation Modal -->
+<div id="DeleteFacilityModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Are you sure you want to delete this facility?</h2>
+      <span class="close" onclick="closeModal('DeleteFacilityModal')">&times;</span>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('DeleteFacilityModal')">No</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">Yes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Booking Modal -->
+<div id="AddBookingModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add New Booking</h2>
+      <span class="close" onclick="closeModal('AddBookingModal')">&times;</span>
+    </div>
+    <form id="bookingForm" onsubmit="handleBookingSubmit(event)">
+      <div class="form-group">
+        <label for="bookingUser">User</label>
+        <select id="bookingUser" required></select> <!-- Dynamically populated -->
+      </div>
+      <div class="form-group">
+        <label for="bookingFacility">Facility</label>
+        <select id="bookingFacility" required></select> <!-- Dynamically populated -->
+      </div>
+      <div class="form-group">
+        <label for="bookingTime">Time</label>
+        <input type="time" id="bookingTime" required>
+      </div>
+      <div class="form-group">
+        <label for="bookingDate">Date</label>
+        <input type="datetime-local" id="bookingDate" required>
+      </div>
+      <div class="form-group">
+        <label for="bookingStatus">Status</label>
+        <select id="bookingStatus" required>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('AddBookingModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Booking</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Booking Modal -->
+<div id="EditBookingModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Edit Booking</h2>
+      <span class="close" onclick="closeModal('EditBookingModal')">&times;</span>
+    </div>
+    <form id="bookingForm" onsubmit="handleBookingSubmit(event)">
+      <input type="hidden" id="editBookingId"> <!-- Hidden ID for the booking being edited -->
+      <div class="form-group">
+        <label for="bookingUser">User</label>
+        <select id="editBookingUser" required></select> <!-- Dynamically populated -->
+      </div>
+      <div class="form-group">
+        <label for="bookingFacility">Facility</label>
+        <select id="editBookingFacility" required></select> <!-- Dynamically populated -->
+      </div>
+      <div class="form-group">
+        <label for="bookingTime">Time</label>
+        <input type="time" id="bookingTime" required>
+      </div>
+      <div class="form-group">
+        <label for="bookingDate">Date</label>
+        <input type="datetime-local" id="editBookingDate" required>
+      </div>
+      <div class="form-group">
+        <label for="bookingStatus">Status</label>
+        <select id="editBookingStatus" required>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('EditBookingModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Booking Confirmation Modal -->
+<div id="DeleteBookingModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Are you sure you want to delete this booking?</h2>
+      <span class="close" onclick="closeModal('DeleteBookingModal')">&times;</span>
+    </div>
+    <input type="hidden" id="deleteBookingId"> <!-- Hidden field for booking ID -->
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('DeleteBookingModal')">No</button>
+      <button class="btn btn-danger" id="confirmDeleteBookingBtn">Yes</button>
+    </div>
+  </div>
+</div>
 
   <script src="static/common.js"></script>
   <script src="static/user.js"></script>

@@ -35,7 +35,7 @@ function editUser(id) {
   document.getElementById('userName').value = user.name;
   document.getElementById('userEmail').value = user.email;
 
-  openModal('userModal');
+  openModal('EditUserModal');
   
   // After user updates and submits, send PUT request
   document.getElementById('userForm').onsubmit = function(event) {
@@ -57,24 +57,36 @@ function editUser(id) {
         user.name = updatedUser.name;  // Update local array
         user.email = updatedUser.email;
         updateTable('usersTableBody', users, addUserToTable);
-        closeModal('userModal');
+        closeModal('EditUserModal');
       })
       .catch(err => console.error('Error editing user:', err));
   };
 }
 
 // Delete User
+// Variable to store the ID of the user to be deleted
+let userToDelete = null;
+
+// Open the confirmation modal
 function deleteUser(id) {
-  if (confirm('Are you sure you want to delete this user?')) {
-    fetch(`/api/users/${id}`, { method: 'DELETE' })
+  userToDelete = id;  // Store the ID of the user to be deleted
+  openModal('DeleteUserModal');  // Show the confirmation modal
+}
+
+// Confirm deletion
+document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+  if (userToDelete !== null) {
+    fetch(`/api/users/${userToDelete}`, { method: 'DELETE' })
       .then(() => {
-        console.log(`Deleted user with ID: ${id}`);
-        users = users.filter(user => user._id !== id);  // Remove from local array
-        updateTable('usersTableBody', users, addUserToTable);
+        console.log(`Deleted user with ID: ${userToDelete}`);
+        users = users.filter(user => user._id !== userToDelete);  // Remove from local array
+        updateTable('usersTableBody', users, addUserToTable);  // Update the table
+        closeModal('DeleteUserModal');  // Close the modal after deletion
+        userToDelete = null;  // Reset the variable
       })
       .catch(err => console.error('Error deleting user:', err));
   }
-}
+});
 
 // Add User
 function handleUserSubmit(event) {
@@ -90,6 +102,7 @@ function handleUserSubmit(event) {
     email: userEmail
   };
 
+  // Send a POST request to the server to add the user to the database
   fetch('/api/users', {
     method: 'POST',
     headers: {
@@ -99,9 +112,13 @@ function handleUserSubmit(event) {
   })
     .then(response => response.json())
     .then(data => {
-      users.push(data);  // Add new user to the users array
-      updateTable('usersTableBody', users, addUserToTable);
-      closeModal('userModal');
+      if (data.error) {
+        alert(data.error);  // Show error if email already exists
+      } else {
+        users.push(data);  // Add the new user to the local users array
+        updateTable('usersTableBody', users, addUserToTable);  // Update the table with the new user
+        closeModal('AddUserModal');  // Close the modal
+      }
     })
     .catch(err => console.error('Error adding user:', err));
 }
@@ -123,3 +140,19 @@ document.querySelector('.search-bar').addEventListener('input', searchUsers);
 document.addEventListener('DOMContentLoaded', function () {
   fetchUsers();
 });
+
+// Function to open the modal
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = 'block';  // Show the modal
+  }
+}
+
+// Function to close the modal
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = 'none';  // Hide the modal
+  }
+}

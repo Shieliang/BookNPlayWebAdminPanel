@@ -26,7 +26,10 @@ def get_users():
     users = list(user_collection.find())
     for user in users:
         user['_id'] = str(user['_id'])  # Ensure _id is returned as string
-        del user['password']  # Remove password from response
+        
+        if 'password' in user:
+            del user['password']
+    
     return jsonify(users)
 
 @app.route('/api/users/<string:user_id>', methods=['DELETE'])
@@ -61,6 +64,20 @@ def delete_facility(facility_id):
     facility_collection.delete_one({"_id": facility_id})
     return '', 204
 
+@app.route('/api/facilities', methods=['POST'])
+def add_facility():
+    data = request.get_json()
+    result = facility_collection.insert_one(data)
+    new_facility = facility_collection.find_one({"_id": result.inserted_id})
+    new_facility['_id'] = str(new_facility['_id'])  # Ensure _id is returned as string
+    return jsonify(new_facility), 201
+
+@app.route('/api/facilities/<string:facility_id>', methods=['PUT'])
+def update_facility(facility_id):
+    data = request.get_json()
+    facility_collection.update_one({"_id": facility_id}, {"$set": data})
+    return '', 204
+
 # Bookings CRUD
 @app.route('/api/bookings', methods=['GET'])
 def get_bookings():
@@ -69,11 +86,24 @@ def get_bookings():
         booking['_id'] = str(booking['_id'])  # Ensure _id is returned as string
     return jsonify(bookings)
 
+@app.route('/api/bookings', methods=['POST'])
+def add_booking():
+    data = request.get_json()
+    result = booking_collection.insert_one(data)
+    new_booking = booking_collection.find_one({"_id": result.inserted_id})
+    new_booking['_id'] = str(new_booking['_id'])  # Ensure _id is returned as string
+    return jsonify(new_booking), 201
+
+@app.route('/api/bookings/<string:booking_id>', methods=['PUT'])
+def update_booking(booking_id):
+    data = request.get_json()
+    booking_collection.update_one({"_id": booking_id}, {"$set": data})
+    return '', 204
+
 @app.route('/api/bookings/<string:booking_id>', methods=['DELETE'])
 def delete_booking(booking_id):
     booking_collection.delete_one({"_id": booking_id})
     return '', 204
 
-# Run the Flask application
 if __name__ == '__main__':
     app.run(debug=True)
