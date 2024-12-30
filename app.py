@@ -6,7 +6,9 @@ from functools import wraps
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+from bson import ObjectId
 import os
+from datetime import datetime
 
 # Load environment variables
 load_dotenv()
@@ -138,14 +140,153 @@ def delete_user(user_id):
 
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "error": str(e)})
-
-        
-@app.route('/facility_management')
+     
+@app.route('/facility_management', methods=['GET'])
 def facility_management():
     if 'admin' not in session:
         return redirect(url_for('login'))
-    return render_template('facility_management.html')
 
+    try:
+        facilities = list(facility_collection.find({}))
+        return render_template('facility_management.html', facilities=facilities)
+
+    except Exception as e:
+        print(f"Error fetching facilities: {str(e)}")
+        return render_template('facility_management.html', error="Error fetching facilities.", facilities=[])
+
+@app.route('/facility_management/create', methods=['POST'])
+def create_facility():
+    if 'admin' not in session:
+        return redirect(url_for('login'))
+
+    name = request.form['facility_name']
+    location = request.form['location']
+    open_time = request.form['operation_open']
+    close_time = request.form['operation_close']
+
+    try:
+        new_facility = {
+            "facility_name": name,
+            "location": location,
+            "operation_time": {
+                "open": open_time,
+                "close": close_time
+            },
+            "booking_time_slots": [],  # Empty by default
+            "status": "active"
+        }
+        facility_collection.insert_one(new_facility)
+        return redirect(url_for('facility_management'))
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+# Helper function to convert 24-hour format to 12-hour AM/PM format
+def format_time_to_am_pm(time_str):
+    time_obj = datetime.strptime(time_str, "%H:%M")  # Parse 24-hour format
+    return time_obj.strftime("%I:%M%p").lstrip('0')  # Convert to 12-hour format with AM/PM
+
+@app.route('/add/<facility_id>', methods=['POST'])
+def add_time_slot(facility_id):
+    if 'admin' not in session:
+        return redirect(url_for('login'))
+    
+    # Get form data
+    start_time = request.form['start_time']
+    end_time = request.form['end_time']
+    status = request.form['status']
+    
+    try:
+        # Format the start and end times to 12-hour AM/PM format
+        formatted_start_time = format_time_to_am_pm(start_time)
+        formatted_end_time = format_time_to_am_pm(end_time)
+        
+        # Find the facility by ID
+        facility = facility_collection.find_one({"_id": ObjectId(facility_id)})
+        
+        if not facility:
+            return jsonify({"success": False, "error": "Facility not found!"})
+
+        # Add the new time slot to the facility's booking_time_slots
+        facility_collection.update_one(
+            {"_id": ObjectId(facility_id)},
+            {"$push": {"booking_time_slots": {
+                "start_time": formatted_start_time,
+                "end_time": formatted_end_time,
+                "status": status
+            }}}
+        )
+        
+        return redirect(url_for('facility_management'))  # Redirect to the facility management page
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+    
+@app.route('/delete/<facility_id>/<slot_start_time>', methods=['POST'])
+def delete_time_slot(facility_id, slot_start_time):
+    if 'admin' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        # Find the facility by its ID (using ObjectId if it's in MongoDB)
+        facility = facility_collection.find_one({'_id': ObjectId(facility_id)})
+
+        if facility:
+            # Remove the time slot from the facility's time_slots array
+            facility_collection.update_one(
+                {'_id': ObjectId(facility_id)},
+                {'$pull': {'booking_time_slots': {'start_time': slot_start_time}}}
+            )
+
+            return redirect(url_for('facility_management'))  # Redirect back to the facility management page
+
+        else:
+            return redirect(url_for('facility_management', error="Facility not found."))
+
+    except Exception as e:
+        print(f"Error deleting time slot: {str(e)}")
+        return redirect(url_for('facility_management', error="Error deleting time slot."))
+    
+@app.route('/facility_management/update/<facility_id>', methods=['POST'])
+def update_facility(facility_id):
+    if 'admin' not in session:
+        return redirect(url_for('login'))
+
+    name = request.form['facility_name']
+    location = request.form['location']
+    open_time = request.form['operation_open']
+    close_time = request.form['operation_close']
+    status = request.form['status']
+
+    try:
+        facility_collection.update_one(
+            {"_id": ObjectId(facility_id)},
+            {"$set": {
+                "facility_name": name,
+                "location": location,
+                "operation_time": {"open": open_time, "close": close_time},
+                "status": status
+            }}
+        )
+        return redirect(url_for('facility_management'))
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+    
+@app.route('/delete/<facility_id>', methods=['POST'])
+def delete_facility(facility_id):
+    if 'admin' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        # Delete the facility from the database using its ObjectId
+        result = facility_collection.delete_one({"_id": ObjectId(facility_id)})
+        
+        if result.deleted_count == 0:
+            return jsonify({"success": False, "error": "Facility not found!"})
+        
+        return redirect(url_for('facility_management'))  # Redirect to the facility management page after deletion
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+    
 @app.route('/booking_management')
 def booking_management():
     if 'admin' not in session:
