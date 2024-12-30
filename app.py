@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-import jwt
-import json
 import requests
 from functools import wraps
 from pymongo import MongoClient
@@ -285,13 +283,127 @@ def delete_facility(facility_id):
         return redirect(url_for('facility_management'))  # Redirect to the facility management page after deletion
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
-
-    
-@app.route('/booking_management')
+ 
+@app.route('/booking_management', methods=['GET', 'POST'])
 def booking_management():
+    # Check if the user is an admin
     if 'admin' not in session:
         return redirect(url_for('login'))
-    return render_template('booking_management.html')
+
+    try:
+        # Fetch the booking and facility data from the database
+        bookings = list(booking_collection.find({}))  # Get all bookings
+        facilities = list(facility_collection.find({}))  # Get all facilities
+
+        # Convert MongoDB ObjectId and Date fields to JSON serializable format
+        for booking in bookings:
+            booking['_id'] = str(booking['_id'])  # Convert ObjectId to string
+            booking['Date'] = booking['Date'].strftime("%Y-%m-%d %H:%M:%S")  # Format Date field
+
+        # Handle form submission for booking creation
+        if request.method == 'POST':
+            # Get the user and booking details from the form
+            user_name = request.form.get('user_name')
+            student_id = request.form.get('student_id')
+            student_name = request.form.get('student_name')
+            phone_number = request.form.get('phone_number')
+            user_id = request.form.get('user_id')
+
+            # Get the facility and booking details from the form
+            facility_name = request.form.get('facility_name')
+            time_slot = request.form.get('time_slot')
+            selected_date = request.form.get('selected_date')
+
+            # Convert the selected date string to a datetime object
+            try:
+                booking_date = datetime.strptime(selected_date, '%Y-%m-%d')  # Adjust format if needed
+            except ValueError:
+                return render_template('booking_management.html', error="Invalid date format. Please use YYYY-MM-DD.", bookings=bookings, facilities=facilities)
+
+            # Insert the new booking into the MongoDB collection
+            booking_collection.insert_one({
+                'FacilityName': facility_name,
+                'Time': time_slot,
+                'Date': booking_date,
+                'UserName': user_name,
+                'StudentId': student_id,
+                'StudentName': student_name,
+                'UserID': user_id,
+                'PhoneNumber': phone_number,
+                'Status': 'Pending'  # Default status is 'Pending'
+            })
+
+            # After successful booking, redirect to the same page to refresh the list
+            return redirect(url_for('booking_management'))
+
+        # Render the booking management page with booking and facility data
+        return render_template('booking_management.html', bookings=bookings, facilities=facilities)
+
+    except Exception as e:
+        # Error handling in case there is an issue fetching data from the database
+        print(f"Error fetching bookings: {str(e)}")
+        return render_template('booking_management.html', error="Error fetching bookings.", bookings=[], facilities=facilities)
+    
+# Route to handle fetching time slots for a selected facility
+@app.route('/get-time-slots')
+def get_time_slots():
+    # Get the 'facility_name' query parameter from the request
+    facility_name = request.args.get('facility_name')
+
+    # Fetch the document for the selected facility from MongoDB
+    facility = facility_collection.find_one({"facility_name": facility_name}, {"_id": 0, "booking_time_slots": 1})
+
+    if facility:
+        # Return the booking time slots for the facility
+        return jsonify({"booking_time_slots": facility["booking_time_slots"]})
+    else:
+        # Return an empty list if the facility doesn't exist
+        return jsonify({"booking_time_slots": []}), 404
+
+    
+@app.route('/delete-booking', methods=['POST'])
+def delete_booking():
+    # Get the booking ID from the form
+    booking_id = request.form.get('booking_id')
+
+    # Convert the booking_id to ObjectId
+    try:
+        booking_id = ObjectId(booking_id)
+    except Exception as e:
+        # Handle the case where the booking_id is invalid or not properly formatted
+        print(f"Error converting booking_id to ObjectId: {e}")
+        return redirect(url_for('booking_management'))
+
+    # Delete the booking from the database
+    booking_collection.delete_one({'_id': booking_id})
+
+    # Redirect to the index page to refresh the booking list
+    return redirect(url_for('booking_management'))
+
+
+@app.route('/update-booking', methods=['POST'])
+def update_booking():
+    # Get the booking ID and new status from the form
+    booking_id = request.form.get('booking_id')
+    new_status = request.form.get('status')
+
+    # Convert the booking_id to ObjectId
+    try:
+        booking_id = ObjectId(booking_id)
+    except Exception as e:
+        # Handle the case where the booking_id is invalid or not properly formatted
+        print(f"Error converting booking_id to ObjectId: {e}")
+        return redirect(url_for('booking_management'))
+
+    # Update the status of the booking in the database
+    booking_collection.update_one(
+        {'_id': booking_id},  # Filter by booking ID
+        {'$set': {'Status': new_status}}  # Set the new status
+    )
+
+    # Redirect to the index page to refresh the booking list
+    return redirect(url_for('booking_management'))
+
 
 # Function to get Auth0 Management API token
 def get_management_api_token():

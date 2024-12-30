@@ -5,28 +5,256 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Management</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* Modal styles */
+        .modal {
+            display: none;  /* Hidden by default */
+            position: fixed;
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black with opacity */
+            padding-top: 60px;
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
             padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
         }
-        a {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
+
+        /* Close button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
             text-decoration: none;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #e6e6e6;
-            color: #000;
+            cursor: pointer;
         }
-        a:hover {
-            background-color: #d4d4d4;
+
+        /* Form styles */
+        form {
+            margin-bottom: 20px;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        .create-button {
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <h1>Booking Management</h1>
-    <p>Welcome to the Booking Management page!</p>
-    <a href="{{ url_for('index') }}">Back to Home</a>
+
+    <!-- Button to create a new booking -->
+    <button onclick="showCreateForm()">Create Booking</button>
+
+    <!-- Form to create a new booking -->
+    <div id="createBookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateModal()">&times;</span>
+            <h2>Create New Booking</h2>
+            <form action="/booking_management" method="POST">
+                <label for="user_name">User Name:</label>
+                <input type="text" name="user_name" id="user_name" required><br><br>
+
+                <label for="student_id">Student ID:</label>
+                <input type="text" name="student_id" id="student_id" required><br><br>
+
+                <label for="student_name">Student Name:</label>
+                <input type="text" name="student_name" id="student_name" required><br><br>
+
+                <label for="phone_number">Phone Number:</label>
+                <input type="text" name="phone_number" id="phone_number" required><br><br>
+
+                <h3>Booking Details</h3>
+
+                <label for="facility_name">Select Facility:</label>
+                <select name="facility_name" id="facility_name" onchange="fetchTimeSlots()">
+                    <option value="">Select a Facility</option>
+                    {% for facility in facilities %}
+                        <option value="{{ facility['facility_name'] }}">{{ facility['facility_name'] }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <label for="time_slot">Select Time Slot:</label>
+                <select name="time_slot" id="time_slot" required>
+                    <!-- Time slots will be dynamically populated here -->
+                </select><br><br>
+
+                <label for="selected_date">Select Date:</label>
+                <input type="date" name="selected_date" id="selected_date" required><br><br>
+
+                <button type="submit">Book Facility</button>
+            </form>
+        </div>
+    </div>
+
+    {% if bookings %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Facility Name</th>
+                    <th>Time</th>
+                    <th>Date</th>
+                    <th>User Name</th>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>User ID</th>
+                    <th>Phone Number</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.FacilityName }}</td>
+                        <td>{{ booking.Time }}</td>
+                        <td>{{ booking.Date }}</td>
+                        <td>{{ booking.UserName }}</td>
+                        <td>{{ booking.StudentId }}</td>
+                        <td>{{ booking.StudentName }}</td>
+                        <td>{{ booking.UserID }}</td>
+                        <td>{{ booking.PhoneNumber }}</td>
+                        <td>{{ booking.Status }}</td>
+                        <td>
+                            <!-- Button to trigger modal visibility -->
+                            <button type="button" onclick="showUpdateForm('{{ booking._id }}', '{{ booking.Status }}')">Update Status</button>
+                            <form method="POST" action="/delete-booking" style="display:inline;">
+                                <input type="hidden" name="booking_id" value="{{ booking._id }}">
+                                <button type="submit" onclick="return confirm('Are you sure you want to delete this time slot?');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No bookings found.</p>
+    {% endif %}
+
+    <!-- Modal for updating status -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Update Booking Status</h2>
+            <form method="POST" action="/update-booking">
+                <input type="hidden" name="booking_id" id="booking_id">
+                <label for="status">New Status:</label>
+                <select name="status" id="status">
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Function to show the modal for updating status
+        function showUpdateForm(bookingId, currentStatus) {
+            document.getElementById('booking_id').value = bookingId;
+            const statusSelect = document.getElementById('status');
+            for (let option of statusSelect.options) {
+                if (option.value === currentStatus) {
+                    option.selected = true;
+                    break;
+                }
+            }
+            document.getElementById('statusModal').style.display = 'block';
+        }
+
+        // Function to show the modal for creating a new booking
+        function showCreateForm() {
+            document.getElementById('createBookingModal').style.display = 'block';
+        }
+
+        // Function to close the modal for updating status
+        function closeModal() {
+            document.getElementById('statusModal').style.display = 'none';
+        }
+
+        // Function to close the modal for creating a new booking
+        function closeCreateModal() {
+            document.getElementById('createBookingModal').style.display = 'none';
+        }
+
+        // Close the modal if clicked outside of the modal content
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('statusModal')) {
+                closeModal();
+            }
+            if (event.target === document.getElementById('createBookingModal')) {
+                closeCreateModal();
+            }
+        }
+
+        function fetchTimeSlots() {
+            const facilityName = document.getElementById('facility_name').value;
+
+            if (facilityName) {
+                // Fetch available time slots for the selected facility
+                fetch(`/get-time-slots?facility_name=${facilityName}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);  // Log the response to inspect it
+                        
+                        const timeSlotSelect = document.getElementById('time_slot');
+                        timeSlotSelect.innerHTML = ''; // Clear previous options
+
+                        // Add a default "Select a Time Slot" option
+                        const defaultOption = document.createElement('option');
+                        defaultOption.textContent = 'Select a Time Slot';
+                        defaultOption.disabled = true; // Disable default option
+                        defaultOption.selected = true;
+                        timeSlotSelect.appendChild(defaultOption);
+
+                        if (data.booking_time_slots) {
+                            // Populate the time slots
+                            data.booking_time_slots.forEach(slot => {
+                                const option = document.createElement('option');
+                                option.value = `${slot.start_time} - ${slot.end_time}`;
+                                option.textContent = `${slot.start_time} to ${slot.end_time} - ${slot.status}`;
+                                timeSlotSelect.appendChild(option);
+                            });
+                        } else {
+                            console.log("No booking time slots found.");
+                        }
+                    })
+                    .catch(error => console.error('Error fetching time slots:', error));
+            }
+        }
+
+    </script>
 </body>
 </html>
