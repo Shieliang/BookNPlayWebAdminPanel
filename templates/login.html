@@ -6,7 +6,7 @@
     <title>Login</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             background-color: #f0f0f0;
             display: flex;
             justify-content: center;
@@ -14,36 +14,59 @@
             height: 100vh;
             margin: 0;
         }
+
         .login-container {
             background-color: #fff;
-            padding: 20px;
+            padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            width: 400px;
             text-align: center;
         }
+
+        .login-container img {
+            width: 100%;
+            height: 350px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
         .login-container h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #001f3f;
             margin-bottom: 20px;
         }
+
         .login-container input {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 18px;
+            color: #001f3f;
+            background-color: transparent;
+            box-sizing: border-box;
         }
+
         .login-container button {
             width: 100%;
             padding: 10px;
-            background-color: #007BFF;
-            color: #fff;
+            margin: 12px 0;
+            background: linear-gradient(90deg, #001f3f 0%, #48997e 100%);
+            color: white;
+            font-size: 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
+
         .login-container button:hover {
-            background-color: #0056b3;
+            background: linear-gradient(90deg, #48997e 0%, #001f3f 100%);
         }
+        
         .error {
             color: red;
             font-size: 0.9em;
@@ -52,12 +75,14 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>Login</h1>
+        <img src="static/images/bnplogo.png" alt="App Logo">
+        <h1>Book N' Play Admin Panel</h1>
         {% if error %}
         <p class="error">{{ error }}</p>
         {% endif %}
+
         <form method="POST">
-            <input type="text" name="username" placeholder="Username" required>
+            <input type="username" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
         </form>

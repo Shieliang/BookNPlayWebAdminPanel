@@ -6,31 +6,73 @@
     <title>Management System</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             text-align: center;
             padding: 20px;
+            position: relative;
         }
-        a {
+
+        img {
+            max-width: 100%; 
+            height: 500px; 
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: bold; 
+            margin-bottom: 25px; 
+        }
+
+        p {
+            font-size: 20px; 
+            margin-bottom: 30px; 
+        }
+
+        .btn {
+            font-size: 18px; 
             display: inline-block;
             margin: 10px;
-            padding: 10px 20px;
+            padding: 10px 15px;
             text-decoration: none;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #e6e6e6;
-            color: #000;
+            border: none;
+            background: linear-gradient(to right, #001f3f, #48997e);
+            border-radius: 10px;
+            height: 25px;
+            width: 200px;
+            line-height: 25px;
+            color: white;
         }
+
         a:hover {
-            background-color: #d4d4d4;
+            background: linear-gradient(to right, #48997e, #001f3f);
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 75px;
+            font-size: 18px;
+            background: linear-gradient(to right, #001f3f, #48997e);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(to right, #48997e, #001f3f);
         }
     </style>
 </head>
 <body>
+    <img src="static/images/bnplogo.png" alt="App Logo">
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     <h1>Welcome to the Management System</h1>
     <p>Select a management area:</p>
-    <a href="{{ url_for('user_management') }}">User Management</a>
-    <a href="{{ url_for('facility_management') }}">Facility Management</a>
-    <a href="{{ url_for('booking_management') }}">Booking Management</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
+    <a href="{{ url_for('user_management') }}" class="btn">User Management</a>
+    <a href="{{ url_for('facility_management') }}" class="btn">Facility Management</a>
+    <a href="{{ url_for('booking_management') }}" class="btn">Booking Management</a>
 </body>
 </html>
