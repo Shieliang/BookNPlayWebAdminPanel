@@ -29,8 +29,8 @@ AUTH0_CLIENT_SECRET = os.getenv('AUTH0_CLIENT_SECRET')
 ALGORITHMS = ["RS256"]
 
 # Admin login (static credentials)
-ADMIN_USERNAME = 'admin'
-ADMIN_PASSWORD = 'admin123'
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
