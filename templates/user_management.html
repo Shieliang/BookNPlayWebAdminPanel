@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff&display=swap" rel="stylesheet">
     <title>User Management</title>
     <style>
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'DynaPuff';
             padding: 20px;
             margin: 0;
-            background-color: #f4f4f4;
+            background-color: #fffdef;
             position: relative; 
         }
 
         h1 {
+            color: #ffa74c; 
             font-size: 38px;
             font-weight: bold;
             text-align: center;
@@ -39,8 +41,8 @@
             padding: 10px 20px;
             font-size: 18px;
             text-decoration: none;
-            background: linear-gradient(to right, #001f3f, #48997e);
-            color: white;
+            background: #000000;
+            color: #ffa5d0;
             border-radius: 5px;
             border: none;
             position: absolute;
@@ -49,14 +51,15 @@
         }
 
         .dashboard-btn:hover {
-            background: linear-gradient(to right, #48997e, #001f3f);
+            background: #000000; 
         }
 
         .create-user-btn {
+            font-family: 'DynaPuff';
             padding: 10px 20px;
             font-size: 18px;
             text-decoration: none;
-            background-color: #036b48;
+            background-color: #4279f1;
             color: white;
             border-radius: 5px;
             border: none;
@@ -64,7 +67,7 @@
         }
 
         .create-user-btn:hover {
-            background-color: #03563a; 
+            background-color: #1f58d3; 
         }
 
         /* Modal Styles */
@@ -83,7 +86,7 @@
 
         .modal-content {
             text-align: center;
-            background-color: #fefefe;
+            background-color: #fffdef;
             margin: 5% auto;
             padding: 30px;
             border: 1px solid #888;
@@ -114,19 +117,20 @@
         }
 
         th, td {
-            padding: 12px;
+            padding: 16px;
             text-align: center;
-            border: 1px solid #ddd;
+            border: 1px solid #ffa74c;
         }
 
         th {
-            background-color: #001f3f;
-            color: white;
+            background-color: #ffdd21;
+            color: #000000;
         }
 
         td button {
+            font-family: 'DynaPuff';
             font-size: 16px;
-            background-color: #f22626;
+            background-color: #ffa74c;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -135,7 +139,7 @@
         }
 
         td button:hover {
-            background-color: #d00202;
+            background-color: #e89033;
         }
 
         form {
@@ -163,12 +167,14 @@
             font-size: 16px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            font-family: 'DynaPuff';
         }
 
         button[type="submit"] {
+            font-family: 'DynaPuff';
             padding: 10px 20px;
             font-size: 18px;
-            background-color: #036b48;
+            background: linear-gradient(90deg, #ffa74c 0%, #ffdd21 100%);
             color: white;
             border-radius: 5px;
             border: none;
@@ -178,7 +184,7 @@
         }
 
         button[type="submit"]:hover {
-            background-color: #03563a; 
+            background: linear-gradient(90deg, #ffdd21 0%, #ffa74c 100%); 
         }
 
         #errorMessage {

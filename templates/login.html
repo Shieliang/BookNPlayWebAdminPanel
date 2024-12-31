@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff&display=swap" rel="stylesheet">
     <title>Login</title>
     <style>
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'DynaPuff';
+            background-color: #fffdef;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,7 +17,8 @@
         }
 
         .login-container {
-            background-color: #fff;
+            font-family: 'DynaPuff';
+            background-color: #fffdef;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -26,7 +28,7 @@
 
         .login-container img {
             width: 100%;
-            height: 350px;
+            height: 400px;
             object-fit: contain;
             margin-bottom: 10px;
         }
@@ -34,7 +36,7 @@
         .login-container h1 {
             font-size: 28px;
             font-weight: bold;
-            color: #001f3f;
+            color: #ffa74c;
             margin-bottom: 20px;
         }
 
@@ -45,26 +47,33 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 18px;
-            color: #001f3f;
-            background-color: transparent;
+            color: #000000;
+            background-color: #fffdef;
             box-sizing: border-box;
+            font-family: 'DynaPuff';
+        }
+
+        input::placeholder {
+            color: #ffa5d0;
+            font-family: 'DynaPuff';
         }
 
         .login-container button {
             width: 100%;
             padding: 10px;
             margin: 12px 0;
-            background: linear-gradient(90deg, #001f3f 0%, #48997e 100%);
+            background: linear-gradient(90deg, #ffa74c 0%, #ffdd21 100%);
             color: white;
             font-size: 20px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-family: 'DynaPuff';
         }
 
         .login-container button:hover {
-            background: linear-gradient(90deg, #48997e 0%, #001f3f 100%);
+            background: linear-gradient(90deg, #ffdd21 0%, #ffa74c 100%); 
         }
         
         .error {
@@ -75,7 +84,7 @@
 </head>
 <body>
     <div class="login-container">
-        <img src="static/images/bnplogo.png" alt="App Logo">
+        <img src="static/images/bnplogo.jpg" alt="App Logo">
         <h1>Book N' Play Admin Panel</h1>
         {% if error %}
         <p class="error">{{ error }}</p>
