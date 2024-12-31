@@ -162,13 +162,17 @@ def create_facility():
     open_time = request.form['operation_open']
     close_time = request.form['operation_close']
 
+    # Convert times to AM/PM format
+    open_time_am_pm = format_time_to_am_pm(open_time)
+    close_time_am_pm = format_time_to_am_pm(close_time)
+
     try:
         new_facility = {
             "facility_name": name,
             "location": location,
             "operation_time": {
-                "open": open_time,
-                "close": close_time
+                "open": open_time_am_pm,
+                "close": close_time_am_pm
             },
             "booking_time_slots": [],  # Empty by default
             "status": "active"
@@ -180,9 +184,9 @@ def create_facility():
 
 # Helper function to convert 24-hour format to 12-hour AM/PM format
 def format_time_to_am_pm(time_str):
-    time_obj = datetime.strptime(time_str, "%H:%M")  # Parse 24-hour format
-    return time_obj.strftime("%I:%M%p").lstrip('0')  # Convert to 12-hour format with AM/PM
-
+    time_obj = datetime.strptime(time_str, "%H:%M")  # Parse 24-hour time
+    return time_obj.strftime("%I:%M %p").lstrip('0')  # Convert to 12-hour AM/PM format
+    
 @app.route('/add/<facility_id>', methods=['POST'])
 def add_time_slot(facility_id):
     if 'admin' not in session:
@@ -254,13 +258,17 @@ def update_facility(facility_id):
     close_time = request.form['operation_close']
     status = request.form['status']
 
+    # Convert times to AM/PM format
+    open_time_am_pm = format_time_to_am_pm(open_time)
+    close_time_am_pm = format_time_to_am_pm(close_time)
+
     try:
         facility_collection.update_one(
             {"_id": ObjectId(facility_id)},
             {"$set": {
                 "facility_name": name,
                 "location": location,
-                "operation_time": {"open": open_time, "close": close_time},
+                "operation_time": {"open": open_time_am_pm, "close": close_time_am_pm},
                 "status": status
             }}
         )
