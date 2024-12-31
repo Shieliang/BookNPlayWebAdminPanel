@@ -5,6 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management</title>
     <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            padding: 20px;
+            margin: 0;
+            background-color: #f4f4f4;
+            position: relative; 
+        }
+
+        h1 {
+            font-size: 38px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            font-size: 25px;
+            font-weight: bold;
+            display: inline-block; 
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            width: 100%;
+        }
+
+        .dashboard-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            text-decoration: none;
+            background: linear-gradient(to right, #001f3f, #48997e);
+            color: white;
+            border-radius: 5px;
+            border: none;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .dashboard-btn:hover {
+            background: linear-gradient(to right, #48997e, #001f3f);
+        }
+
+        .create-user-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            text-decoration: none;
+            background-color: #036b48;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .create-user-btn:hover {
+            background-color: #03563a; 
+        }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -20,11 +82,14 @@
         }
 
         .modal-content {
+            text-align: center;
             background-color: #fefefe;
             margin: 5% auto;
-            padding: 20px;
+            padding: 30px;
             border: 1px solid #888;
-            width: 80%;
+            width: 35%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
 
         .close {
@@ -40,15 +105,99 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #001f3f;
+            color: white;
+        }
+
+        td button {
+            font-size: 16px;
+            background-color: #f22626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        td button:hover {
+            background-color: #d00202;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        label {
+            font-size: 18px;
+            font-weight: bold;
+            width: 100px;
+        }
+
+        input {
+            width: 100%; 
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #036b48;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%; 
+        }
+
+        button[type="submit"]:hover {
+            background-color: #03563a; 
+        }
+
+        #errorMessage {
+            color: red;
+            text-align: center;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
+    <a href="{{ url_for('index') }}" class="dashboard-btn">Back to Dashboard</a>
     
     <h1>User Management</h1>
-    <a href="{{ url_for('index') }}">Dashboard</a>
-    <button id="createUserBtn">Create New User</button>
-    <div id="userList">
+    <div class="header-container">
         <h2>Users</h2>
+        <button class="create-user-btn" id="createUserBtn">Create New User</button>
+    </div>
+
+    <div id="userList">
         <table border="1">
             <thead>
                 <tr>
@@ -79,18 +228,24 @@
             <span class="close">&times;</span>
             <h2>Create User</h2>
             <form id="createUserForm">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required><br><br>
+                <div class="form-row">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required><br>
+                </div>
 
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required><br><br>
+                <div class="form-row">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required><br>
+                </div>
 
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required><br><br>
+                <div class="form-row">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required><br>
+                </div>
 
                 <button type="submit">Create User</button>
             </form>
-            <p id="errorMessage" style="color:red;"></p>
+            <p id="errorMessage"></p>
         </div>
     </div>
 
